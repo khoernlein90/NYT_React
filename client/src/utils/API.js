@@ -1,20 +1,21 @@
-import axios from 'axios';
-
-const APIKEY = 'b9f91d369ff59547cd47b931d8cbc56b:0:74623931';
-
-const queryUrlBase = 'https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=' + APIKEY + '&q=';
+import axios from "axios";
+import filterParams from "./filterParams";
 
 export default {
-  nytSearch: function(queryTerms) {
-    return axios.get(`${queryUrlBase}${queryTerms}`);
+  // Gets articles from the NYT API
+  getArticles: function(params) {
+    return axios.get("/api/nyt", { params: filterParams(params) });
   },
+  // Gets all saved articles
   getSavedArticles: function() {
-    return axios.get('/api/saved/');
+    return axios.get("/api/articles");
   },
+  // Deletes the saved article with the given id
   deleteArticle: function(id) {
-    return axios.delete('/api/saved/' + id);
+    return axios.delete("/api/articles/" + id);
   },
+  // Saves an article to the database
   saveArticle: function(articleData) {
-    return axios.post('/api/saved', articleData);
+    return axios.post("/api/articles", articleData);
   }
 };

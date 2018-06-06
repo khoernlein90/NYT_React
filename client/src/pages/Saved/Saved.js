@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Col, Row, Container } from '../../components/Grid';
-import {List, ListItem} from '../../components/List';
-import Jumbotron from '../../components/Jumbotron';
-import API from '../../utils/API';
+import React, {Component} from "react";
+import Jumbotron from "../../components/Jumbotron";
+import Card from "../../components/Card";
+import Article from "../../components/Article";
+import Footer from "../../components/Footer";
+import API from "../../utils/API";
+import {Col, Row, Container} from "../../components/Grid";
+import {List} from "../../components/List";
 
 class Saved extends Component {
   state = {
@@ -11,56 +13,65 @@ class Saved extends Component {
   };
 
   componentDidMount() {
-    this.loadArticles();
+    this.getSavedArticles();
   }
 
-  loadArticles = () => {
-    API.getSavedArticles()
-      .then(res => {
-        console.log(res.data);
-        this.setState({
-          articles: res.data
-        })
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  getSavedArticles = () => {
+    API
+      .getSavedArticles()
+      .then(res => this.setState({articles: res.data}))
+      .catch(err => console.log(err));
   };
 
-  deleteArticle = id => {
-    API.deleteArticle(id)
-      .then(res => this.loadArticles())
-      .catch(err => console.log(err));
+  handleArticleDelete = id => {
+    API
+      .deleteArticle(id)
+      .then(res => this.getSavedArticles());
   };
 
   render() {
     return (
+      <Container>
         <Row>
           <Col size="md-12">
-            {this.state.articles.length ? (
-              <List>
-                {this.state.articles.map(article => (
-                  <ListItem key={article._id}>
-                    <a href={article.url} target="_blank">
-                      <strong>{article.title}</strong>
-                    </a>
-                    <br />
-                    <span>Published on {article.date}</span>
-                    <button
-                      className="btn btn-danger"
-                      style={{ float: 'right' }}
-                      onClick={() => this.deleteArticle(article._id)}
-                    >
-                      Delete Article
-                    </button>
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <h3>No Saved Articles to Display</h3>
-            )}
+            <Jumbotron>
+              <h1 className="text-center">
+                <strong>ReactJS New York Times Article Search</strong>
+              </h1>
+              <h2 className="text-center">
+                Search for and save articles of interest.
+              </h2>
+            </Jumbotron>
           </Col>
         </Row>
+        <Row>
+          <Col size="md-12">
+            <Card title="Saved Articles" icon="download">
+              {this.state.articles.length
+                ? (
+                  <List>
+                    {this
+                      .state
+                      .articles
+                      .map(article => (<Article
+                        key={article._id}
+                        _id={article._id}
+                        title={article.title}
+                        url={article.url}
+                        date={article.date}
+                        handleClick={this.handleArticleDelete}
+                        buttonText="Delete Article"
+                        saved/>))}
+                  </List>
+                )
+                : (
+                  <h2 className="text-center">No Saved Articles</h2>
+                )}
+            </Card>
+          </Col>
+        </Row>
+        <Footer/>
+      </Container>
     );
   }
 }

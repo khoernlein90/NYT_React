@@ -1,8 +1,10 @@
 import React from "react";
+import "./Jumbotron.css";
 
-const Jumbotron = ({ children }) =>
-  <div className="jumbotron">
+const Jumbotron = ({ children }) => (
+  <div className="jumbotron mt-2">
     {children}
-  </div>;
+  </div>
+);
 
 export default Jumbotron;
